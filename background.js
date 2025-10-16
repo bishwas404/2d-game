@@ -1,5 +1,5 @@
 export default class Layer{
-  constructor(image, speedModifier){
+  constructor(image, speedModifier,player){
     this.x = 0;
     this.y = 0;
     this.width= window.innerWidth;
@@ -8,6 +8,7 @@ export default class Layer{
     this.image = image
     this.speedModifier = speedModifier
     // this.speed = gameSpeed*this.speedModifier
+    this.player = player
   }
   updateLayer(gameSpeed){
     this.speed = gameSpeed* this.speedModifier
