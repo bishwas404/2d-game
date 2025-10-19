@@ -11,9 +11,11 @@ window.addEventListener('load',()=>{
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
-  let gameSpeed = 5;
 
-  const player = new Player(canvas.width, canvas.height, gameSpeed);
+
+  const player = new Player(canvas.width, canvas.height/*,gameSpeed*/);
+
+  let gameSpeed = player.currentState.enter();
   const input = new InputHandler();
 
   const backgroundLayer1 = new Image();
@@ -44,10 +46,9 @@ window.addEventListener('load',()=>{
   function animate(timeStamp){
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
-
     ctx.clearRect(0,0,canvas.width, canvas.height);
     gameObjects.forEach(object =>{
-    object.updateLayer(gameSpeed);
+    object.updateLayer(player.speed);
     object.drawLayer(ctx);
   })
     player.update(input.lastkey);

@@ -1,12 +1,12 @@
-import { StandingLeft, StandingRight, SittingLeft, SittingRight,RunningLeft, RunningRight, JUMPINGLeft, JUMPINGRight, FALLINGLeft, FALLINGRight} from "./state.js";
+import { /*StandingLeft, StandingRight,*/ SittingLeft, SittingRight,RunningLeft, RunningRight, JUMPINGLeft, JUMPINGRight, FALLINGLeft, FALLINGRight, ROLLINGLeft, ROLLINGRight} from "./state.js";
 
 export default class Player{
-  constructor(gameWidth, gameHeight,gameSpeed){
+  constructor(gameWidth, gameHeight/*,gameSpeed*/){
     this.gameWidth = gameWidth;
     this.gameHeight = gameHeight;
-    this.gameSpeed = gameSpeed;
-    this.states = [new StandingLeft(this,this.gameSpeed), new StandingRight(this,this.gameSpeed),new SittingLeft(this),new SittingRight(this), new RunningLeft(this), new RunningRight(this), new JUMPINGLeft(this), new JUMPINGRight(this),new FALLINGLeft(this), new FALLINGRight(this)];
-    this.currentState = this.states[1];
+    // this.gameSpeed = gameSpeed;
+    this.states = [/*new StandingLeft(this,this.gameSpeed), new StandingRight(this,this.gameSpeed),*/ new SittingLeft(this),new SittingRight(this), new RunningLeft(this), new RunningRight(this), new JUMPINGLeft(this), new JUMPINGRight(this),new FALLINGLeft(this), new FALLINGRight(this), new ROLLINGLeft(this), new ROLLINGRight(this)];
+    this.currentState = this.states[3];
     this.image = document.getElementById('dogImage');
     this.width = 200;
     this.height = 181.83;
@@ -15,7 +15,7 @@ export default class Player{
     this.vy = 0;
     this.weight = 1;
     this.frameX = 0;
-    this.frameY = 0;
+    this.frameY = 6;
     this.maxFrame = 6;
     this.speed =0 ;
     this.maxSpeed = 10;
@@ -39,10 +39,10 @@ export default class Player{
   update(input){
     this.currentState.handleInput(input);
     // horizontal movement
-    this.x += this.speed;
+    // this.x += this.speed;
 
-    if(this.x<=0) this.x = 0;
-    else if (this.x >= this.gameWidth - this.width) this.x = this.gameWidth - this.width;
+    // if(this.x<=0) this.x = 0;
+    // else if (this.x >= this.gameWidth - this.width) this.x = this.gameWidth - this.width;
     // vertical movement
     this.y += this.vy;
     if(!this.onGround()){
@@ -59,6 +59,9 @@ export default class Player{
   }
   onGround(){
     return this.y >= this.gameHeight - this.height-122
+  }
+  getSpeed(){
+    return this.speed;
   }
 
 }

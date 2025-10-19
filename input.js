@@ -19,6 +19,9 @@ export default class InputHandler {
         case "ArrowUp":
           this.lastkey = "PRESS up";
           break;
+        case " ":
+          this.lastkey = "PRESS space";
+          break;
       }
     });
     window.addEventListener('keyup',e=>{
@@ -35,6 +38,9 @@ export default class InputHandler {
           break;
         case "ArrowUp":
           this.lastkey = "RELEASED up";
+          break;
+        case " ":
+          this.lastkey = "RELEASED space";
           break;
       }
     });
