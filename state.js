@@ -10,7 +10,9 @@ export const states={
   FALLING_LEFT: 6,
   FALLING_RIGHT:7,
   ROLLING_LEFT:8,
-  ROLLING_RIGHT:9
+  ROLLING_RIGHT:9,
+  ROLLING_UP:10,
+  DIVING_Right:11
 }
 class State {
   constructor(state){
@@ -88,8 +90,8 @@ export class SittingRight extends State{
     return this.player.speed
   }
   handleInput(input){
-    if(input === 'PRESS left') this.player.setState(states.SITTING_LEFT);
-    else if(input === 'PRESS up') this.player.setState(states.RUNNING_RIGHT); //standing changed to running
+    // if(input === 'PRESS left') this.player.setState(states.SITTING_LEFT);
+    if(input === 'PRESS up') this.player.setState(states.RUNNING_RIGHT); //standing changed to running
     else if(input === 'RELEASED down') this.player.setState(states.RUNNING_RIGHT);  //standing changed to running
     else if(input === 'PRESS space') this.player.setState(states.ROLLING_RIGHT);
   }
@@ -128,11 +130,12 @@ export class RunningRight extends State{
 
   }
   handleInput(input){
-    if(input === 'PRESS left') this.player.setState(states.RUNNING_LEFT);
-    else if(input === 'RELEASED right') this.player.setState(states.RUNNING_RIGHT);  //standing changed to running
+    // if(input === 'PRESS left') this.player.setState(states.RUNNING_LEFT);
+    if(input === 'RELEASED right') this.player.setState(states.RUNNING_RIGHT);  //standing changed to running
     else if(input === 'PRESS down') this.player.setState(states.SITTING_RIGHT);
     else if(input === 'PRESS up') this.player.setState(states.JUMPING_RIGHT); //added later
     else if(input === 'PRESS space') this.player.setState(states.ROLLING_RIGHT);
+    else if (this.player.vy > 0) this.player.setState(states.FALLING_RIGHT);
   }
 }
 export class JUMPINGLeft extends State{
@@ -173,15 +176,39 @@ export class JUMPINGRight extends State{
     return this.player.speed
 
   }
-  handleInput(input){
-    if(input ==='PRESS left') this.player.setState(states.JUMPING_LEFT);
-    else if (this.player.onGround()){
-      if(input === 'PRESS space') this.player.setState(states.ROLLING_RIGHT);
-      else this.player.setState(states.RUNNING_RIGHT)
-    }  //standing changed to running
-    else if (this.player.vy > 0) this.player.setState(states.FALLING_RIGHT);
-
+  // handleInput(input){
+  //   // if(input ==='PRESS left') this.player.setState(states.JUMPING_LEFT);
+  //   if (this.player.onGround()){
+  //     if(input === 'PRESS space') this.player.setState(states.ROLLING_RIGHT);
+  //     else this.player.setState(states.RUNNING_RIGHT)
+  //   }
+  //   else if (this.player.vy > 0) this.player.setState(states.FALLING_RIGHT);
+  //   //standing changed to running
+  //   else if(!this.player.onGround()){
+  //     if(input === 'PRESS space') this.player.setState(states.ROLLING_RIGHT);
+  //     if(input === 'PRESS down') this.player.setState(states.DIVING_Right)
+  //   }
+  // }
+  handleInput(input) {
+  if (this.player.onGround()) {
+    if (input === 'PRESS space') {
+      this.player.setState(states.ROLLING_RIGHT);
+    } else {
+      this.player.setState(states.RUNNING_RIGHT);
+    }
+  } else {
+     if (this.player.vy > 0) {
+        this.player.setState(states.FALLING_RIGHT);
+      }
+     else if (input === 'PRESS space') {
+      this.player.setState(states.ROLLING_RIGHT);
+    } else if (input === 'RELEASED space') {
+      this.player.setState(states.JUMPING_RIGHT); // Return to jump, not run
+    } else if (input === 'PRESS down') {
+      this.player.setState(states.DIVING_Right);
+    }
   }
+}
 }
 export class FALLINGLeft extends State{
   constructor(player){
@@ -214,9 +241,11 @@ export class FALLINGRight extends State{
     return this.player.speed
   }
   handleInput(input){
-    if(input ==='PRESS left') this.player.setState(states.FALLING_LEFT);
-    else if (this.player.onGround()) this.player.setState(states.RUNNING_RIGHT)  //standing changed to running
-  }
+    // if(input ==='PRESS left') this.player.setState(states.FALLING_LEFT);
+    if(input === 'PRESS space'){ this.player.setState(states.ROLLING_RIGHT)}
+
+    else if (this.player.onGround()){ this.player.setState(states.RUNNING_RIGHT)  //standing changed to running}
+  }}
 
 }
 export class ROLLINGRight extends State{
@@ -231,13 +260,33 @@ export class ROLLINGRight extends State{
 
     return this.player.speed
   }
-   handleInput(input){
-    if(input === 'PRESS left') this.player.setState(states.RUNNING_LEFT);
-    else if(input === 'PRESS right') this.player.setState(states.RUNNING_RIGHT);
-    else if(input === 'RELEASED space') this.player.setState(states.RUNNING_RIGHT);  //standing changed to running
-    else if(input === 'PRESS down') this.player.setState(states.SITTING_RIGHT);
-    else if(input === 'PRESS up') this.player.setState(states.JUMPING_RIGHT); //added later
+  //  handleInput(input){
+  //   // if(input === 'PRESS left') this.player.setState(states.RUNNING_LEFT);
+  //   if(input === 'PRESS right') this.player.setState(states.RUNNING_RIGHT);
+  //   else if(input === 'RELEASED space') this.player.setState(states.RUNNING_RIGHT);  //standing changed to running
+  //   else if(input === 'PRESS down') this.player.setState(states.SITTING_RIGHT);
+  //   else if(input === 'PRESS up') this.player.setState(states.ROLLING_UP);
+  // }
+  handleInput(input) {
+  if (input === 'PRESS right') {
+    this.player.setState(states.RUNNING_RIGHT);
+  } else if (input === 'PRESS down' && !this.player.onGround()) {
+    this.player.setState(states.DIVING_Right);
+  } else if (input === 'PRESS up' && this.player.onGround()) {
+    this.player.setState(states.ROLLING_UP);
+  } else if (input === 'RELEASED space') {
+    if (!this.player.onGround()) {
+      // Stay in air — go back to jumping or falling
+      if (this.player.vy > 0) {
+        this.player.setState(states.FALLING_RIGHT);
+      } else {
+        this.player.setState(states.JUMPING_RIGHT);
+      }
+    } else {
+      this.player.setState(states.RUNNING_RIGHT);
+    }
   }
+}
 }
 export class ROLLINGLeft extends State{
   constructor(player){
@@ -257,5 +306,94 @@ export class ROLLINGLeft extends State{
     else if(input === 'RELEASED space') this.player.setState(states.RUNNING_LEFT);  //standing changed to running
     else if(input === 'PRESS down') this.player.setState(states.SITTING_LEFT);
     else if(input === 'PRESS up') this.player.setState(states.JUMPING_LEFT); //added later
+  }
+}
+
+export class ROLLINGUp extends State{
+  constructor(player){
+    super('ROLLING UP');
+    this.player = player;
+  }
+  enter(){
+    this.player.frameY=10;
+    if(this.player.onGround()) this.player.vy -= 20;
+    this.player.speed = this.player.maxSpeed + 10;
+    this.player.maxFrame = 6
+
+    return this.player.speed
+
+  }
+  // handleInput(input){
+  //   if (input === 'PRESS up' && this.player.onGround()) {
+  //     this.player.vy -= 20; // trigger jump again
+  //   }
+
+  //   if (this.player.onGround()) {
+  //     if (input === 'PRESS right') this.player.setState(states.RUNNING_RIGHT);
+  //   }
+
+  //   if (input === 'PRESS right') {
+  //     this.player.setState(states.RUNNING_RIGHT);
+  //   } else if (input === 'RELEASED space') {
+  //     if (this.player.vy > 0) this.player.setState(states.FALLING_RIGHT);
+  //     // this.player.setState(states.RUNNING_RIGHT);
+  //   } else if (input === 'PRESS down') {
+  //     this.player.setState(states.DIVING_Right);
+  //   }
+  // }
+  handleInput(input) {
+  // Allow jump again if up is pressed while on ground
+  if (input === 'PRESS up' && this.player.onGround()) {
+    this.player.vy -= 20;
+  }
+
+  // Transition to jump when space is released mid-air
+  if (input === 'RELEASED space') {
+    if (!this.player.onGround()) {
+      if (this.player.vy > 0) {
+        this.player.setState(states.FALLING_RIGHT);
+      } else {
+        this.player.setState(states.JUMPING_RIGHT);
+      }
+    } else {
+      this.player.setState(states.RUNNING_RIGHT);
+    }
+  }
+
+  // Optional: allow diving from rolling up
+  if (input === 'PRESS down' && !this.player.onGround()) {
+    this.player.setState(states.DIVING_Right);
+  }
+
+  // Allow transition to running if on ground
+  if (input === 'PRESS right' && this.player.onGround()) {
+    this.player.setState(states.RUNNING_RIGHT);
+  }
+}
+}
+
+export class DIVINGRight extends State {
+  constructor(player) {
+    super('DIVING RIGHT');
+    this.player = player;
+  }
+
+  enter() {
+    this.player.frameY = 10;
+    this.player.vy = 10; // High downward velocity
+    this.player.speed = this.player.maxSpeed + 10; // Maintain horizontal speed
+    this.player.maxFrame = 6;
+
+    return this.player.speed;
+  }
+
+  handleInput(input) {
+    if (this.player.onGround()) {
+      this.player.setState(states.RUNNING_RIGHT);
+    } else if (input === 'PRESS up') {
+      this.player.setState(states.JUMPING_RIGHT);
+    } else if (input === 'PRESS space') {
+      this.player.setState(states.ROLLING_RIGHT);
+    }
   }
 }

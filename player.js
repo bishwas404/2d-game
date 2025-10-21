@@ -1,22 +1,22 @@
-import { /*StandingLeft, StandingRight,*/ SittingLeft, SittingRight,RunningLeft, RunningRight, JUMPINGLeft, JUMPINGRight, FALLINGLeft, FALLINGRight, ROLLINGLeft, ROLLINGRight} from "./state.js";
+import { /*StandingLeft, StandingRight,*/ SittingLeft, SittingRight,RunningLeft, RunningRight, JUMPINGLeft, JUMPINGRight, FALLINGLeft, FALLINGRight, ROLLINGLeft, ROLLINGRight, ROLLINGUp, DIVINGRight} from "./state.js";
 
 export default class Player{
   constructor(gameWidth, gameHeight/*,gameSpeed*/){
     this.gameWidth = gameWidth;
     this.gameHeight = gameHeight;
     // this.gameSpeed = gameSpeed;
-    this.states = [/*new StandingLeft(this,this.gameSpeed), new StandingRight(this,this.gameSpeed),*/ new SittingLeft(this),new SittingRight(this), new RunningLeft(this), new RunningRight(this), new JUMPINGLeft(this), new JUMPINGRight(this),new FALLINGLeft(this), new FALLINGRight(this), new ROLLINGLeft(this), new ROLLINGRight(this)];
-    this.currentState = this.states[3];
+    this.states = [/*new StandingLeft(this,this.gameSpeed), new StandingRight(this,this.gameSpeed),*/ new SittingLeft(this),new SittingRight(this), new RunningLeft(this), new RunningRight(this), new JUMPINGLeft(this), new JUMPINGRight(this),new FALLINGLeft(this), new FALLINGRight(this), new ROLLINGLeft(this), new ROLLINGRight(this), new ROLLINGUp(this), new DIVINGRight(this)];
+    this.currentState = this.states[1];
     this.image = document.getElementById('dogImage');
     this.width = 200;
     this.height = 181.83;
-    this.x = this.gameWidth*0.5-this.width*0.5;
+    this.x = this.gameWidth*0.2-this.width*0.5;
     this.y =this.gameHeight-this.height-122;
     this.vy = 0;
-    this.weight = 1;
+    this.weight = 0.5;
     this.frameX = 0;
-    this.frameY = 6;
-    this.maxFrame = 6;
+    this.frameY = 8;
+    this.maxFrame = 4;
     this.speed =0 ;
     this.maxSpeed = 10;
     this.fps = 60;
@@ -51,7 +51,7 @@ export default class Player{
     else{
       this.vy = 0;
     }
-    if(this.y > this.gameHeight - this.height-122) this.y = this.gameHeight - this.height
+    if(this.y > this.gameHeight - this.height-122) this.y = this.gameHeight - this.height -122
   }
   setState(state){
     this.currentState = this.states[state];

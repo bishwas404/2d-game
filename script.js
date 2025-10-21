@@ -15,7 +15,6 @@ window.addEventListener('load',()=>{
 
   const player = new Player(canvas.width, canvas.height/*,gameSpeed*/);
 
-  let gameSpeed = player.currentState.enter();
   const input = new InputHandler();
 
   const backgroundLayer1 = new Image();
